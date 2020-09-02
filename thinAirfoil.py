@@ -48,44 +48,52 @@ def getCoeffs(mpxx, alphaDeg):
     if np.abs(CL) < _eps:
         xcp = None
     else:
-        xcp = (np.pi*0.25*(A1-A2))/CL
+        xcp = 0.25-(np.pi*0.25*(A1-A2))/CL
 
     coeffs = {
         'CL': CL,
         'CM_le': -0.5*(A0+A1-A2*0.5),
-        'CM_c4': -np.pi*0.25*(A1-A2),
+        'CM_c/4': -np.pi*0.25*(A1-A2),
         'xcp': xcp
     }
 
     return coeffs
 
+def usage():
+    print('Usage: thinAirfoil.py MPXX [alphaDeg]')
+    print('Computes airfoil coefficients using thin airfoil theory')
+
 def main():
     args = sys.argv
     if len(args) == 1:
-        print('Usage: thinAirfoil.py MPXX [alphaDeg]')
-        print('Computes airfoil coefficients using thin airfoil theory')
+        usage()
 
     elif len(args) == 2:
-        mpxx = args[1]
-        # Print lift curve characteristics for airfoil
-        CL0 = getCoeffs(mpxx, 0.0)['CL']
-        CL2 = getCoeffs(mpxx, 2.0)['CL']
-        CLa = (CL2-CL0)/(2.0*np.pi/180.0)
-        alpha0 = -CL0/CLa*(180.0/np.pi)
+        if args[1] == '-h' or args[1] == '--help':
+            usage()
+        else:
+            mpxx = args[1]
+            # Print lift curve characteristics for airfoil
+            CL0 = getCoeffs(mpxx, 0.0)['CL']
+            CL2 = getCoeffs(mpxx, 2.0)['CL']
+            CLa = (CL2-CL0)/(2.0*np.pi/180.0)
+            alpha0 = -CL0/CLa*(180.0/np.pi)
 
-        print('CL0         = ' + str(CL0))
-        print('CLa (1/rad) = ' + str(CLa))
-        print('alf (deg)   = ' + str(alpha0))
+            print('CLa  (1/rad) = ' + '{: f}'.format(CLa))
+            print('CL0          = ' + '{: f}'.format(CL0))
+            print('alf0 (deg)   = ' + '{: f}'.format(alpha0))
 
     else:
         mpxx = args[1]
+        print(' Alpha       CL         CM_le      CM_c/4     xcp/c' )
         for alfStr in args[2:]:
             alphaDeg = float(alfStr)
             coeffs = getCoeffs(mpxx, alphaDeg)
-            print('Alpha = ' + str(alphaDeg))
-            for i in coeffs:
-                print(i + ' = '  + str(coeffs[i]))
-            print()
+            print('{: f}'.format(alphaDeg), end='  ')
+            print('{: f}'.format(coeffs['CL']), end='  ')
+            print('{: f}'.format(coeffs['CM_le']), end='  ')
+            print('{: f}'.format(coeffs['CM_c/4']), end='  ')
+            print('{: f}'.format(coeffs['xcp']))
 
 
 if __name__ == '__main__':
