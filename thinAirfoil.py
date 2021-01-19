@@ -82,12 +82,14 @@ def main():
                 mpxx = airfoilCode
                 # Print lift curve characteristics for airfoil
                 CL0 = getCoeffs(mpxx, 0.0)['CL']
+                CM  = getCoeffs(mpxx, 0.0)['CM_c/4']
                 CL2 = getCoeffs(mpxx, 2.0)['CL']
                 CLa = (CL2-CL0)/(2.0*np.pi/180.0)
                 alpha0 = -CL0/CLa*(180.0/np.pi)
 
                 print('CLa  (1/rad) = ' + '{: f}'.format(CLa))
                 print('CL0          = ' + '{: f}'.format(CL0))
+                print('CM c/4       = ' + '{: f}'.format(CM))
                 print('alf0 (deg)   = ' + '{: f}'.format(alpha0))
 
     else:
